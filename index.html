@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mate Fácil | Aprende y calcula</title>
+<style>
+:root{--blue:#1d63dc;--navy:#1e3a8a;--ink:#1e293b;--muted:#64748b;--line:#dbe3ee;--bg:#f4f7fb;--green:#15803d}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{background:var(--bg);color:var(--ink);line-height:1.5}
+button,input{font:inherit}
+button{cursor:pointer}
+.nav{background:#fff;padding:13px 4%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px #0f172a12;position:sticky;top:0;z-index:5}
+.logo{font-size:23px;font-weight:800;color:var(--navy);white-space:nowrap}.logo span{color:var(--blue)}
+.menu{display:flex;gap:7px;flex-wrap:wrap}
+.menu button,.secondary{background:#eff4fa;color:#334155;border:0;padding:9px 13px;border-radius:9px;font-weight:700}
+.menu button:hover,.menu button.active{background:var(--blue);color:white}
+.hero{background:linear-gradient(135deg,#1553ad,#2196f3);color:white;text-align:center;padding:34px 15px 62px}
+.hero h1{font-size:clamp(24px,4vw,34px);margin-bottom:8px}.hero p{margin:0 auto 18px;max-width:720px;font-size:15px}
+.search{max-width:600px;margin:auto;background:white;border-radius:30px;display:flex;padding:5px 7px 5px 17px;gap:6px}
+.search input{flex:1;min-width:0;border:0;outline:0;color:#0f172a;padding:8px}
+.primary{background:var(--blue);color:white;border:0;padding:10px 17px;border-radius:22px;font-weight:700}
+.search .primary{background:#1d63dc}
+.cards{max-width:1050px;margin:-37px auto 22px;padding:0 15px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.card{border-radius:15px;padding:16px;text-align:center;box-shadow:0 4px 12px #0f172a12}
+.card:nth-child(1){background:#ede9fe}.card:nth-child(2){background:#e0f2fe}.card:nth-child(3){background:#dcfce7}.card:nth-child(4){background:#ffedd5}
+.card .emoji{font-size:29px}.card h3{margin:4px 0}.card p{font-size:13px;color:#475569;margin-bottom:12px}
+.wrap{max-width:1050px;margin:0 auto 35px;padding:0 15px}
+.notice{display:none;background:#dbeafe;border:1px solid #93c5fd;color:#1e3a8a;padding:13px;border-radius:11px;margin-bottom:16px}
+.panel{background:white;border-radius:15px;padding:20px;box-shadow:0 4px 12px #0f172a0c;margin-bottom:18px;scroll-margin-top:85px}
+.section-title{font-size:21px;color:var(--navy);border-bottom:2px solid #e2e8f0;padding-bottom:8px;margin-bottom:15px}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:14px}
+.tool{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:15px;min-width:0}
+.tool h3{font-size:16px;color:#0f172a;margin-bottom:7px}
+.formula{background:#eff6ff;border-left:4px solid var(--blue);padding:7px 10px;font-weight:700;color:var(--navy);margin:8px 0;font-size:13px}
+.fields{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:9px}
+.fields label{font-size:13px;color:#475569}
+.fields input{width:76px;max-width:100%;padding:8px;border:1.5px solid #94a3b8;border-radius:7px;background:white;color:#111827}
+.fields input.wide{width:150px}
+.calc{background:var(--green);color:white;border:0;padding:9px 13px;border-radius:7px;font-weight:700}
+.result{display:none;margin-top:10px;padding:10px;background:#dcfce7;border:1px solid #86efac;border-radius:7px;color:#14532d;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.result.error{background:#fee2e2;border-color:#fca5a5;color:#991b1b}
+.muted{color:var(--muted);font-size:13px}
+.chat{height:220px;overflow-y:auto;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px}
+.msg{padding:8px 11px;border-radius:9px;margin-bottom:8px;font-size:14px;white-space:pre-wrap;max-width:90%}
+.msg.user{background:var(--blue);color:white;margin-left:auto}.msg.bot{background:white;border:1px solid var(--line)}
+.chat-row{display:flex;gap:8px}.chat-row input{flex:1;min-width:0;border:1px solid #94a3b8;border-radius:8px;padding:10px}
+.quick{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.quick button{border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;padding:6px 9px;border-radius:20px;font-size:12px}
+.hidden{display:none!important}
+footer{text-align:center;padding:18px;color:#64748b;font-size:13px}
+@media(max-width:600px){.nav{position:static}.menu{width:100%}.menu button{flex:1}.panel{padding:15px}.search{border-radius:14px}.search .primary{padding:9px 12px}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="logo">📐 mate<span>facil</span></div>
+  <nav class="menu" aria-label="Secciones">
+    <button class="active" data-target="todo">Ver todo</button>
+    <button data-target="arit">Aritmética</button>
+    <button data-target="alg">Álgebra</button>
+    <button data-target="geo">Geometría</button>
+    <button data-target="calc">Cálculo</button>
+    <button data-target="ayuda">Ayuda</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Tu guía interactiva de matemáticas</h1>
+  <p>Resuelve operaciones, ecuaciones y problemas paso a paso. También puedes buscar un tema para encontrar su explicación.</p>
+  <div class="search">
+    <input id="searchInput" type="text" placeholder="Ej.: 12*5, 2x+6=14, Pitágoras…" aria-label="Buscar operación o tema">
+    <button class="primary" id="searchBtn">Buscar</button>
+  </div>
+</section>
+
+<section class="cards">
+  <article class="card"><div class="emoji">🧮</div><h3>Aritmética</h3><p>Operaciones, fracciones y porcentajes</p><button class="primary" data-target="arit">Empezar</button></article>
+  <article class="card"><div class="emoji">∑</div><h3>Álgebra</h3><p>Ecuaciones lineales y cuadráticas</p><button class="primary" data-target="alg">Empezar</button></article>
+  <article class="card"><div class="emoji">📐</div><h3>Geometría</h3><p>Pitágoras, áreas y perímetros</p><button class="primary" data-target="geo">Empezar</button></article>
+  <article class="card"><div class="emoji">📈</div><h3>Cálculo</h3><p>Derivadas e integrales básicas</p><button class="primary" data-target="calc">Empezar</button></article>
+</section>
+
+<main class="wrap">
+  <div id="notice" class="notice" role="status"></div>
+
+  <section class="panel area" id="arit">
+    <h2 class="section-title">🧮 Aritmética</h2>
+    <div class="tools">
+      <article class="tool"><h3>1. Suma y resta</h3>
+        <p>La suma reúne dos o más cantidades para obtener un total. La resta permite encontrar la diferencia entre cantidades o calcular cuánto queda al quitar una parte.</p>
+        <div class="formula">Suma: a + b &nbsp; | &nbsp; Resta: a − b</div>
+        <p><b>Ejemplo:</b> 18 + 7 = 25. En cambio, 18 − 7 = 11.</p>
+        <p class="muted">Para practicar multiplicación, división, resta y potenciación con explicación paso a paso, consulta el profesor virtual.</p>
+      </article>
+      <article class="tool"><h3>2. Suma de fracciones</h3><div class="formula">a/b + c/d = (a·d + b·c)/(b·d)</div>
+        <div class="fields"><input id="fa" type="number" placeholder="1" aria-label="Numerador 1"> / <input id="fb" type="number" placeholder="2" aria-label="Denominador 1"> + <input id="fc" type="number" placeholder="1" aria-label="Numerador 2"> / <input id="fd" type="number" placeholder="3" aria-label="Denominador 2"><button class="calc" id="fracBtn">Calcular</button></div><div class="result" id="fRes"></div>
+      </article>
+      <article class="tool"><h3>3. Porcentajes</h3><div class="formula">(Cantidad × porcentaje) / 100</div>
+        <div class="fields"><label>Porcentaje <input id="pct" type="number" step="any" placeholder="20"> %</label><label>De <input id="amount" type="number" step="any" placeholder="150"></label><button class="calc" id="pctBtn">Calcular</button></div><div class="result" id="pRes"></div>
+      </article>
+      <article class="tool"><h3>4. Números decimales y operaciones combinadas</h3>
+        <p>Los números decimales representan cantidades que incluyen una parte entera y una parte menor que la unidad. En operaciones combinadas se respeta un orden: paréntesis, potencias, multiplicaciones y divisiones, y finalmente sumas y restas.</p>
+        <div class="formula">Orden habitual: ( ) → potencias → × y ÷ → + y −</div>
+        <p><b>Ejemplo:</b> 4 + 3 × 2 = 4 + 6 = 10. Primero se multiplica y después se suma.</p>
+      </article>
+    </div>
+    <div class="tool" style="margin-top:14px"><h3>Más sobre aritmética</h3>
+      <p><b>Fracciones:</b> representan partes iguales de una unidad. El numerador indica cuántas partes se consideran y el denominador en cuántas partes iguales se dividió la unidad. Para sumar o restar fracciones con distinto denominador, primero se busca un denominador común.</p>
+      <p><b>Porcentajes:</b> expresan una proporción sobre 100. Por ejemplo, 25 % equivale a 25/100 o 0,25. Para hallar un porcentaje de una cantidad, se multiplica la cantidad por el porcentaje y se divide entre 100.</p>
+      <p><b>Números decimales:</b> cada posición después de la coma representa décimos, centésimos, milésimos, etc. Al sumar o restar, se alinean las comas decimales.</p>
+    </div>
+  </section>
+
+  <section class="panel area" id="alg">
+    <h2 class="section-title">∑ Álgebra y ecuaciones</h2>
+    <div class="tools">
+      <article class="tool"><h3>1. Ecuación lineal (ax + b = c)</h3><div class="formula">x = (c − b) / a</div>
+        <div class="fields"><label>a <input id="la" type="number" step="any" placeholder="2"></label><label>b <input id="lb" type="number" step="any" placeholder="6"></label><label>c <input id="lc" type="number" step="any" placeholder="14"></label><button class="calc" id="linearBtn">Resolver x</button></div><div class="result" id="lRes"></div>
+      </article>
+      <article class="tool"><h3>2. Ecuación cuadrática (ax² + bx + c = 0)</h3><div class="formula">x = (−b ± √(b² − 4ac)) / 2a</div>
+        <div class="fields"><label>a <input id="qa" type="number" step="any" placeholder="1"></label><label>b <input id="qb" type="number" step="any" placeholder="-5"></label><label>c <input id="qc" type="number" step="any" placeholder="6"></label><button class="calc" id="quadBtn">Resolver</button></div><div class="result" id="qRes"></div>
+      </article>
+    </div>
+    <div class="tool" style="margin-top:14px"><h3>Fundamentos de álgebra</h3>
+      <p><b>Variable:</b> letra que representa un número cuyo valor puede cambiar o ser desconocido. <b>Coeficiente:</b> número que multiplica a la variable. <b>Término independiente:</b> número que no está multiplicado por una variable.</p>
+      <p><b>Expresión algebraica:</b> combinación de números, variables y operaciones. A diferencia de una ecuación, no contiene necesariamente un signo de igualdad.</p>
+      <p><b>Ecuaciones:</b> resolver una ecuación significa encontrar el valor de la incógnita que hace verdadera la igualdad. Para mantener la igualdad, cualquier operación realizada en un miembro debe realizarse también en el otro.</p>
+      <p><b>Ecuación cuadrática:</b> es una ecuación de segundo grado. El discriminante b² − 4ac permite conocer si tiene dos soluciones reales distintas, una solución real doble o soluciones complejas.</p>
+    </div>
+  </section>
+
+  <section class="panel area" id="geo">
+    <h2 class="section-title">📐 Geometría</h2>
+    <div class="tools">
+      <article class="tool"><h3>1. Teorema de Pitágoras</h3><div class="formula">c = √(a² + b²)</div>
+        <div class="fields"><label>Cateto a <input id="pa" type="number" step="any" placeholder="3"></label><label>Cateto b <input id="pb" type="number" step="any" placeholder="4"></label><button class="calc" id="pythBtn">Calcular</button></div><div class="result" id="pythRes"></div>
+      </article>
+      <article class="tool"><h3>2. Círculo: área y perímetro</h3><div class="formula">A = πr² &nbsp; | &nbsp; P = 2πr</div>
+        <div class="fields"><label>Radio <input id="radius" type="number" step="any" placeholder="5"></label><button class="calc" id="circleBtn">Calcular</button></div><div class="result" id="circleRes"></div>
+      </article>
+      <article class="tool"><h3>3. Área de triángulo</h3><div class="formula">Área = (base × altura) / 2</div>
+        <div class="fields"><label>Base <input id="base" type="number" step="any" placeholder="10"></label><label>Altura <input id="height" type="number" step="any" placeholder="6"></label><button class="calc" id="triBtn">Calcular</button></div><div class="result" id="triRes"></div>
+      </article>
+      <article class="tool"><h3>4. Rectángulo: área y perímetro</h3><div class="formula">A = base × altura &nbsp; | &nbsp; P = 2(base + altura)</div>
+        <div class="fields"><label>Base <input id="rectB" type="number" step="any" placeholder="8"></label><label>Altura <input id="rectH" type="number" step="any" placeholder="4"></label><button class="calc" id="rectBtn">Calcular</button></div><div class="result" id="rectRes"></div>
+      </article>
+    </div>
+    <div class="tool" style="margin-top:14px"><h3>Conceptos importantes de geometría</h3>
+      <p><b>Geometría:</b> estudia las formas, los tamaños, las posiciones y las propiedades del espacio. Una figura plana tiene dos dimensiones; un cuerpo geométrico tiene tres.</p>
+      <p><b>Perímetro:</b> longitud total del contorno de una figura. <b>Área:</b> medida de la superficie que ocupa. <b>Volumen:</b> espacio que ocupa un cuerpo tridimensional.</p>
+      <p><b>Triángulos:</b> tienen tres lados y la suma de sus ángulos interiores es 180°. En un triángulo rectángulo existe un ángulo de 90°; el lado opuesto es la hipotenusa y los otros dos son catetos.</p>
+      <p><b>Círculo y circunferencia:</b> la circunferencia es la línea curva cerrada; el círculo es la región interior. El radio va del centro a la circunferencia y el diámetro mide el doble del radio.</p>
+    </div>
+  </section>
+
+  <section class="panel area" id="calc">
+    <h2 class="section-title">📈 Cálculo básico</h2>
+    <div class="tools">
+      <article class="tool"><h3>1. Derivada de un monomio</h3><div class="formula">Si f(x) = a·xⁿ, entonces f'(x) = a·n·xⁿ⁻¹</div>
+        <div class="fields"><label>Coeficiente a <input id="da" type="number" step="any" placeholder="3"></label><label>Exponente n <input id="dn" type="number" step="1" placeholder="2"></label><button class="calc" id="derivBtn">Derivar</button></div><div class="result" id="dRes"></div>
+      </article>
+      <article class="tool"><h3>2. Integral indefinida de un monomio</h3><div class="formula">∫ a·xⁿ dx = a/(n+1) · xⁿ⁺¹ + C (n ≠ −1)</div>
+        <div class="fields"><label>Coeficiente a <input id="ia" type="number" step="any" placeholder="3"></label><label>Exponente n <input id="in" type="number" step="1" placeholder="2"></label><button class="calc" id="integralBtn">Integrar</button></div><div class="result" id="iRes"></div>
+      </article>
+    </div>
+    <div class="tool" style="margin-top:14px"><h3>Introducción al cálculo</h3>
+      <p><b>Límite:</b> describe el valor al que se aproxima una función cuando la variable se acerca a un punto. Es una idea fundamental para definir derivadas e integrales.</p>
+      <p><b>Continuidad:</b> de manera intuitiva, una función es continua en un punto si no presenta saltos, huecos ni interrupciones allí.</p>
+      <p><b>Derivada:</b> mide la tasa de cambio instantánea de una función; geométricamente, corresponde a la pendiente de la recta tangente a la curva en un punto.</p>
+      <p><b>Integral:</b> permite acumular cantidades y calcular áreas bajo curvas en situaciones apropiadas. La constante C aparece en las integrales indefinidas porque una función y cualquier constante sumada a ella tienen la misma derivada.</p>
+    </div>
+    <p class="muted" style="margin-top:12px">Estas herramientas resuelven monomios de la forma a·xⁿ; no representan un sistema de cálculo simbólico general.</p>
+  </section>
+
+  <section class="panel area" id="ayuda">
+    <h2 class="section-title">💬 Ayuda matemática</h2>
+    <p class="muted" style="margin-bottom:10px">Este profesor virtual está dedicado a enseñarte cuatro operaciones: resta, multiplicación, división y potenciación. Puedes escribir una operación (por ejemplo, <b>125 ÷ 5</b>) o preguntar cómo se resuelve. Te mostrará el procedimiento y el resultado. Esta versión funciona con explicaciones integradas en la página; todavía no está conectada a una IA externa.</p>
+    <div class="quick"><button data-question="Explícame una resta: 82 - 37">Resta paso a paso</button><button data-question="Explícame una multiplicación: 24 * 13">Multiplicación paso a paso</button><button data-question="Explícame una división: 144 / 12">División paso a paso</button><button data-question="Explícame una potencia: 3 ^ 4">Potenciación paso a paso</button></div>
+    <div class="chat" id="chatBox" aria-live="polite"><div class="msg bot">¡Hola! Soy el profesor de Mate Fácil. Puedo enseñarte resta, multiplicación, división y potenciación. Escribe una operación o dime cuál quieres aprender.</div></div>
+    <div class="chat-row"><input id="chatInput" placeholder="Ej.: 125 ÷ 5 o ¿cómo se multiplica?" aria-label="Pregunta para el profesor virtual"><button class="primary" id="sendChat">Enviar</button></div>
+  </section>
+</main>
+<footer>Mate Fácil · Herramientas educativas para practicar matemáticas.</footer>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+function number(id){const raw=$(id).value.trim();return raw===""?NaN:Number(raw)}
+function show(id,text,error=false){const el=$(id);el.textContent=text;el.classList.toggle("error",error);el.style.display="block"}
+function hide(id){$(id).style.display="none"}
+function valid(values){return values.every(Number.isFinite)}
+function fmt(n){return Number(n.toPrecision(10)).toString()}
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1}
+function go(target){if(target==="todo"){document.querySelectorAll(".area").forEach(x=>x.classList.remove("hidden"));document.querySelectorAll(".menu button").forEach(b=>b.classList.toggle("active",b.dataset.target==="todo"));window.scrollTo({top:0,behavior:"smooth"});return}
+ document.querySelectorAll(".area").forEach(x=>x.classList.toggle("hidden",x.id!==target));document.querySelectorAll(".menu button").forEach(b=>b.classList.toggle("active",b.dataset.target===target));$(target).scrollIntoView({behavior:"smooth",block:"start"});}
+document.querySelectorAll("[data-target]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.target)));
+$("fracBtn").onclick=()=>{let [a,b,c,d]=["fa","fb","fc","fd"].map(number);if(!valid([a,b,c,d])||b===0||d===0)return show("fRes","Introduce numeradores y denominadores válidos; los denominadores no pueden ser cero.",true);let num=a*d+c*b,den=b*d,g=gcd(num,den);if(den<0)g=-g;show("fRes",`${fmt(a)}/${fmt(b)} + ${fmt(c)}/${fmt(d)} = ${fmt(num/den)} = ${num/g}/${den/g} (fracción simplificada)`);};
+$("pctBtn").onclick=()=>{let p=number("pct"),a=number("amount");if(!valid([p,a]))return show("pRes","Introduce un porcentaje y una cantidad válidos.",true);show("pRes",`${fmt(p)} % de ${fmt(a)} = ${fmt(a*p/100)}`)};
+$("linearBtn").onclick=()=>{let [a,b,c]=["la","lb","lc"].map(number);if(!valid([a,b,c]))return show("lRes","Completa los tres valores.",true);if(a===0)return show("lRes",b===c?"La igualdad se cumple para cualquier valor de x.":"No existe solución.",true);show("lRes",`x = (${fmt(c)} − ${fmt(b)}) / ${fmt(a)} = ${fmt((c-b)/a)}`)};
+$("quadBtn").onclick=()=>{let [a,b,c]=["qa","qb","qc"].map(number);if(!valid([a,b,c]))return show("qRes","Completa a, b y c.",true);if(a===0)return show("qRes","El coeficiente a no puede ser cero en una ecuación cuadrática.",true);let d=b*b-4*a*c;if(d<0)return show("qRes",`El discriminante es ${fmt(d)}. No hay soluciones reales (las soluciones son complejas).`);let x1=(-b+Math.sqrt(d))/(2*a),x2=(-b-Math.sqrt(d))/(2*a);show("qRes",`Discriminante: ${fmt(d)}\n x₁ = ${fmt(x1)}\n x₂ = ${fmt(x2)}`)};
+$("pythBtn").onclick=()=>{let [a,b]=["pa","pb"].map(number);if(!valid([a,b])||a<0||b<0)return show("pythRes","Introduce catetos válidos y no negativos.",true);show("pythRes",`c = √(${fmt(a)}² + ${fmt(b)}²) = ${fmt(Math.hypot(a,b))}`)};
+$("circleBtn").onclick=()=>{let r=number("radius");if(!Number.isFinite(r)||r<0)return show("circleRes","Introduce un radio válido y no negativo.",true);show("circleRes",`Área = π × ${fmt(r)}² = ${fmt(Math.PI*r*r)} unidades²\nPerímetro = 2 × π × ${fmt(r)} = ${fmt(2*Math.PI*r)} unidades`)};
+$("triBtn").onclick=()=>{let [b,h]=["base","height"].map(number);if(!valid([b,h])||b<0||h<0)return show("triRes","Introduce base y altura válidas y no negativas.",true);show("triRes",`Área = (${fmt(b)} × ${fmt(h)}) / 2 = ${fmt(b*h/2)} unidades²`)};
+$("rectBtn").onclick=()=>{let [b,h]=["rectB","rectH"].map(number);if(!valid([b,h])||b<0||h<0)return show("rectRes","Introduce medidas válidas y no negativas.",true);show("rectRes",`Área = ${fmt(b*h)} unidades²\nPerímetro = 2 × (${fmt(b)} + ${fmt(h)}) = ${fmt(2*(b+h))} unidades`)};
+$("derivBtn").onclick=()=>{let a=number("da"),n=number("dn");if(!valid([a,n])||!Number.isInteger(n))return show("dRes","Introduce un coeficiente y un exponente entero.",true);if(a===0||n===0)return show("dRes","La derivada es 0.");show("dRes",`f(x) = ${fmt(a)}x^${fmt(n)}\nf'(x) = ${fmt(a*n)}x^${fmt(n-1)}`)};
+$("integralBtn").onclick=()=>{let a=number("ia"),n=number("in");if(!valid([a,n])||!Number.isInteger(n))return show("iRes","Introduce un coeficiente y un exponente entero.",true);if(n===-1)return show("iRes","Para n = −1, la integral es a·ln|x| + C.",false);show("iRes",`∫ ${fmt(a)}x^${fmt(n)} dx = ${fmt(a/(n+1))}x^${fmt(n+1)} + C`)};
+
+function search(){let q=$("searchInput").value.trim().toLowerCase();let note=$("notice");if(!q){note.textContent="Escribe una operación o un tema para buscar.";note.style.display="block";return}
+let target=null,explain="";
+if(/fracci/.test(q)){target="arit";explain="En la sección de Aritmética puedes sumar fracciones."}
+else if(/porcent|%/.test(q)){target="arit";explain="En Aritmética encontrarás la calculadora de porcentajes."}
+else if(/aritm|fracci|porcent/.test(q)){target="arit";explain="Abrí la sección de Aritmética."}
+else if(/ecuaci|algebra|álgebra|cuadrát|lineal/.test(q)){target="alg";explain="Abrí la sección de Álgebra."}
+else if(/pitag|pitág|tri[aá]ngulo|círculo|circulo|rect[aá]ngulo|geometr|[áa]rea|per[ií]metro/.test(q)){target="geo";explain="Abrí la sección de Geometría."}
+else if(/derivad|integral|c[aá]lculo/.test(q)){target="calc";explain="Abrí la sección de Cálculo."}
+else if(/^[0-9+\-*/().\s^]+$/.test(q)){target="arit";$("operation").value=q.replace(/×/g,"*").replace(/÷/g,"/");$("opBtn").click();explain="Interpreté lo escrito como una operación y calculé el resultado en Aritmética."}
+else if(/ayuda|explica|tema/.test(q)){target="ayuda";explain="Puedes consultar la ayuda matemática al final de la página."}
+if(target){note.textContent=explain;note.style.display="block";go(target)}else{note.textContent="No encontré ese tema. Prueba con: aritmética, álgebra, geometría, cálculo o profesor virtual.";note.style.display="block"}}
+$("searchBtn").onclick=search;$("searchInput").addEventListener("keydown",e=>{if(e.key==="Enter")search()});
+function explainOperation(q){
+  const text=q.toLowerCase().replace(/,/g,".").replace(/×/g,"*").replace(/÷/g,"/").replace(/\bpor\b/g,"*").replace(/\bentre\b/g,"/").replace(/\belevado a\b/g,"^");
+  const match=text.match(/(-?\d+(?:\.\d+)?)\s*([+\-*/^])\s*(-?\d+(?:\.\d+)?)/);
+  if(match){
+    const a=Number(match[1]), op=match[2], b=Number(match[3]);
+    if(op==="+") return "La operación detectada es una suma. Se reúnen las dos cantidades: "+fmt(a)+" + "+fmt(b)+" = "+fmt(a+b)+".";
+    if(op==="-") return "RESTAR: queremos conocer la diferencia entre las cantidades.\\n1. Partimos de "+fmt(a)+".\\n2. Quitamos "+fmt(b)+".\\n3. Calculamos: "+fmt(a)+" − "+fmt(b)+" = "+fmt(a-b)+".\\nResultado: "+fmt(a-b)+".";
+    if(op==="*") return "MULTIPLICAR: es una suma repetida cuando trabajamos con números naturales.\\n1. Descomponemos "+fmt(b)+" en partes si ayuda: "+fmt(b)+".\\n2. Multiplicamos "+fmt(a)+" por "+fmt(b)+".\\n3. Resultado: "+fmt(a)+" × "+fmt(b)+" = "+fmt(a*b)+".";
+    if(op==="/"){
+      if(b===0) return "No se puede dividir entre cero. La división requiere un divisor distinto de cero.";
+      return "DIVIDIR: buscamos cuántas veces cabe el divisor en el dividendo.\\n1. Dividendo: "+fmt(a)+". Divisor: "+fmt(b)+".\\n2. Comprobación: cociente × divisor = dividendo (si la división es exacta).\\n3. "+fmt(a)+" ÷ "+fmt(b)+" = "+fmt(a/b)+".\\nResultado: "+fmt(a/b)+".";
+    }
+    if(op==="^"){
+      const result=Math.pow(a,b);
+      if(!Number.isFinite(result)) return "No puedo representar ese resultado con números finitos.";
+      return "POTENCIACIÓN: la base se multiplica por sí misma tantas veces como indica el exponente.\\n1. Base: "+fmt(a)+". Exponente: "+fmt(b)+".\\n2. "+fmt(a)+"^"+fmt(b)+" significa multiplicar la base por sí misma "+fmt(b)+" veces cuando el exponente es un entero positivo.\\n3. Resultado: "+fmt(result)+".";
+    }
+  }
+  if(/resta|restar|sustra/.test(text)) return "Para restar, identifica el minuendo (cantidad inicial) y el sustraendo (cantidad que quitas). Alinea las cifras por valor posicional y resta de derecha a izquierda. Si una cifra de arriba es menor, puedes reagrupar una unidad de la posición siguiente. Envíame una operación como 82 - 37 y la resolvemos.";
+  if(/multiplic|producto/.test(text)) return "La multiplicación permite sumar repetidamente una misma cantidad. Sus términos son factores y el resultado se llama producto. Para números de varias cifras, multiplica por cada cifra y suma los productos parciales, respetando el valor posicional. Envíame un ejemplo como 24 * 13.";
+  if(/divisi|dividir|cociente/.test(text)) return "En una división, el dividendo es la cantidad que se reparte, el divisor indica entre cuánto se reparte, el cociente es el resultado y puede existir un residuo. Para comprobarla: divisor × cociente + residuo = dividendo. Envíame un ejemplo como 144 / 12.";
+  if(/potenc|exponente|base/.test(text)) return "Una potencia tiene una base y un exponente. La base es el número que se repite como factor y el exponente indica cuántas veces aparece. Por ejemplo, 3^4 = 3 × 3 × 3 × 3 = 81. Envíame una potencia para resolverla.";
+  return "Puedo enseñarte únicamente estas cuatro operaciones: resta, multiplicación, división y potenciación. Escribe una operación usando -, *, / o ^. Ejemplos: 82 - 37, 24 * 13, 144 / 12 o 3 ^ 4.";
+}
+function addMsg(text,who){let d=document.createElement("div");d.className="msg "+who;d.textContent=text;$("chatBox").appendChild(d);$("chatBox").scrollTop=$("chatBox").scrollHeight}
+function ask(q){q=q.trim();if(!q)return;addMsg(q,"user");addMsg(explainOperation(q),"bot")}
+$("sendChat").onclick=()=>{ask($("chatInput").value);$("chatInput").value=""};$("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("sendChat").click()});
+document.querySelectorAll("[data-question]").forEach(b=>b.onclick=()=>ask(b.dataset.question));
+</script>
+</body>
+</html>
